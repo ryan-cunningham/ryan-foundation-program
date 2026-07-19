@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 1 · Foundation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16201c;
+    --paper:#0b4008;        /* deep field green background */
+    --on-paper:#f4f4f0;     /* light text on the green */
+    --on-paper-dim:#a9c3a6; /* dimmed light text on the green */
+    --hdr:#d2e3d4;          /* day-card header colour */
+    --card:#f4f4f0;
+    --line:#d5cfc2;
+    --muted:#6d7671;
+    --go:#1f5c3d;           /* deep field green */
+    --go-soft:#e2ede4;
+    --amber:#b06a12;
+    --red:#a8351f;
+    --steel:#2c3a44;
+    --done:#e7eee9;
+    --shadow:0 1px 0 rgba(0,0,0,.15), 0 10px 30px -16px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.5;
+    padding:22px 16px 60px;
+  }
+  .wrap{max-width:1120px; margin:0 auto;}
+
+  /* ---- header ---- */
+  header{margin-bottom:18px;}
+  h1{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:clamp(30px,6vw,50px); line-height:.96; margin:0 0 8px;
+    text-transform:uppercase; letter-spacing:.005em; color:#f4f4f0;
+  }
+  .lede{margin:2px 0 14px; max-width:64ch; color:#f4f4f0; font-size:14.5px;}
+  .lede b{color:#f4f4f0; font-weight:600;}
+
+  /* ---- block selector ---- */
+  .blocks-sel{
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;
+    margin:20px 0 12px;
+  }
+  .blk{
+    text-align:center; border:1.5px solid var(--line); background:var(--card);
+    border-radius:11px; padding:10px 8px; cursor:pointer;
+    transition:all .14s ease; display:flex; flex-direction:column;
+    align-items:center; gap:3px;
+  }
+  .blk:hover{border-color:var(--hdr);}
+  .blk .bn{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:19px; letter-spacing:.03em; text-transform:uppercase; line-height:1;
+    color:var(--ink);
+  }
+  .blk .bsub{
+    font-size:11px; letter-spacing:.01em; color:var(--muted);
+    line-height:1.25; white-space:normal; overflow-wrap:break-word;
+    max-width:100%;
+  }
+  .blk.on{background:#d2e3d4; border-color:#d2e3d4;}
+  .blk.on .bn{color:#0b2b07;}
+  .blk.on .bsub{color:#2f4a35;}
+
+  /* ---- week selector ---- */
+  .weeks{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:7px;
+    margin:16px 0 14px;
+  }
+  .weeks .lab{
+    grid-column:1/-1;
+    font-family:'Barlow Condensed',sans-serif; font-weight:600;
+    text-transform:uppercase; letter-spacing:.13em; font-size:13px;
+    color:var(--on-paper-dim); margin:0 0 -2px;
+  }
+  .wk{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:16px; letter-spacing:.03em;
+    border:1.5px solid var(--line); background:var(--card);
+    color:var(--ink); border-radius:9px; padding:9px 0; cursor:pointer;
+    transition:all .13s ease; line-height:1; text-align:center;
+  }
+  .wk:hover{border-color:var(--hdr);}
+  .wk.on{background:var(--hdr); border-color:var(--hdr); color:#0b2b07;}
+  .wk .n{font-size:19px;}
+
+
+
+  /* ---- warm-up ---- */
+  .warm{
+    background:#f4f4f0; color:#12210f; border:1px solid #1f3823; border-radius:12px;
+    padding:12px 16px; margin-bottom:20px; display:flex; gap:14px;
+    align-items:baseline; flex-wrap:wrap;
+  }
+  .warm .t{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    text-transform:uppercase; letter-spacing:.13em; font-size:14px;
+    color:#000; white-space:nowrap;
+  }
+  .warm .s{font-size:13px; color:#1c2c17;}
+  .warm .s b{color:#000; font-weight:700;}
+
+  /* ---- day grid ---- */
+  .days{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .day{
+    background:var(--card); border:1.5px solid #1f3823;
+    border-radius:14px; box-shadow:var(--shadow); overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .day > .hd{
+    padding:13px 16px 12px; background:var(--hdr);
+    border-bottom:1px solid rgba(11,43,7,.18);
+    display:flex; align-items:baseline; gap:9px;
+    cursor:pointer; user-select:none; -webkit-user-select:none;
+  }
+  .day .hd .dl,
+  .day .hd .dn{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:17px; letter-spacing:.08em; text-transform:uppercase;
+    line-height:1; color:#000;
+  }
+  .day .hd .chev{
+    margin-left:auto; align-self:center; width:15px; height:15px;
+    flex:0 0 auto; transition:transform .2s ease; color:#12210f;
+  }
+  .day .hd .chev svg{width:100%; height:100%; display:block;}
+  .day.closed .hd{border-bottom-color:transparent;}
+  .day.closed .hd .chev{transform:rotate(-90deg);}
+  .day.closed .body{display:none;}
+  .body{padding:11px; display:flex; flex-direction:column; gap:9px; flex:1;}
+
+  /* exercise row */
+  .ex{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:8px 10px; border:1px solid var(--line); border-radius:9px;
+    background:var(--card); cursor:pointer; transition:background .12s, border-color .12s;
+    position:relative;
+  }
+  .ex:hover{border-color:#b9c2ba;}
+  .ex .tick{
+    flex:0 0 26px; width:26px; height:26px; border:1.6px solid var(--line);
+    border-radius:6px; margin-top:1px; display:grid; place-items:center;
+    position:relative; transition:all .12s;
+  }
+  .ex .tick .code{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:12.5px; letter-spacing:.02em; color:var(--muted);
+    transition:opacity .12s;
+  }
+  .ex .tick svg{position:absolute; width:15px; height:15px; opacity:0; transition:opacity .12s;}
+  .ex.done{background:var(--done); border-color:#bcd2c2;}
+  .ex.done .tick{background:var(--go); border-color:var(--go);}
+  .ex.done .tick .code{opacity:0;}
+  .ex.done .tick svg{opacity:1;}
+  .ex.done .nm{color:var(--muted); text-decoration:line-through;}
+  .ex .txt{flex:1; min-width:0;}
+  .ex .nm{font-weight:600; font-size:13.5px; line-height:1.25;}
+  .ex .note{font-size:11.5px; color:var(--muted); line-height:1.3; margin-top:1px;}
+  .ex .load{
+    display:inline-block; margin-top:4px;
+    font-family:'Barlow Condensed',sans-serif; font-weight:600;
+    font-size:14.5px; letter-spacing:.02em; color:var(--ink);
+    background:var(--go-soft); border-radius:5px; padding:1px 8px;
+  }
+  .ex .load.na{background:#eee; color:var(--muted);}
+
+  /* tags on solo items */
+  /* superset / solo box */
+  .pair{
+    border:1.5px dashed #b7c3b9; border-radius:11px; padding:8px 8px 9px;
+    background:#e8e8e0; display:flex; flex-direction:column; gap:8px; position:relative;
+  }
+  .pair > .ph{
+    display:flex; align-items:center; gap:8px; padding:1px 2px 2px;
+  }
+  .pair .ph .pt{
+    flex:0 0 auto; white-space:nowrap;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:11px; letter-spacing:.11em; text-transform:uppercase;
+    color:#f4f4f0; background:#1f3823; border-radius:5px; padding:2px 8px;
+  }
+  .pair .ph .pt.fin{background:var(--amber);}
+  .pair .ph .pi{font-size:11px; color:var(--muted); min-width:0;}
+  .pair .ex{background:#f4f4f0;}
+
+  /* reset-week button */
+  .reset-week{
+    display:block; margin:4px auto 0; padding:7px 16px;
+    background:transparent; border:1px solid rgba(210,227,212,.35);
+    color:var(--on-paper-dim); border-radius:8px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:12px; letter-spacing:.03em;
+    transition:all .13s ease;
+  }
+  .reset-week:hover{ border-color:#e07a63; color:#f0b3a6; }
+
+  .tip{
+    text-align:center; color:var(--on-paper-dim); font-size:12.5px;
+    margin:24px auto 0; max-width:70ch;
+  }
+  .grad{
+    margin:24px auto 0; max-width:70ch; text-align:center;
+    background:#f4f4f0; border:1.5px solid #1f3823; border-radius:12px;
+    padding:14px 18px; font-size:13px; color:#2b332c; line-height:1.6;
+  }
+  .grad b{color:#16201c; font-weight:700;}
+  .grad .tl-title{
+    display:block; font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    text-transform:uppercase; letter-spacing:.12em; font-size:13px;
+    color:#1f3823; margin-bottom:5px;
+  }
+
+  /* ---- responsive ---- */
+  @media(max-width:860px){
+    .days{grid-template-columns:1fr; gap:13px;}
+    .warm{flex-direction:column; gap:5px;}
+  }
+  @media(max-width:430px){
+    body{padding:16px 11px 48px;}
+    .wk{padding:8px 0; font-size:14px; border-radius:7px;}
+    .wk .n{font-size:16px;}
+    .weeks{gap:5px;}
+    .blk{padding:9px 4px; min-width:0;}
+    .blk .bn{font-size:16px;}
+    .blk .bsub{font-size:9.5px;}
+    .blocks-sel{gap:6px;}
+  }
+
+  /* ---- print: all six weeks, all days ---- */
+  @media print{
+    body{background:#fff; padding:0; font-size:11px;}
+    h1{color:var(--ink);} .lede{color:#333;} .lede b{color:#000;}
+    .eyebrow{color:var(--go);}
+    .grad{color:#333;} .grad b{color:#000;}
+    .weeks,.tip,.reset-week,.blocks-sel{display:none;}
+    .day{break-inside:avoid; box-shadow:none;}
+    .day.closed .body{display:flex !important;}
+    .day .hd .chev{display:none;}
+    .print-all{display:block;}
+    .days{gap:8px;}
+    .wk-print-label{
+      display:block; font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      text-transform:uppercase; letter-spacing:.1em; font-size:15px;
+      color:var(--go); margin:14px 0 6px; border-top:2px solid var(--ink); padding-top:6px;
+    }
+  }
+  .wk-print-label{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>18-Week Strength Foundation Program</h1>
+  </header>
+
+  <div class="blocks-sel">
+    <button class="blk on" data-b="1"><span class="bn">Block 1</span><small class="bsub" id="bsub1"></small></button>
+    <button class="blk" data-b="2"><span class="bn">Block 2</span><small class="bsub" id="bsub2"></small></button>
+    <button class="blk" data-b="3"><span class="bn">Block 3</span><small class="bsub" id="bsub3"></small></button>
+  </div>
+
+  <div class="weeks" id="weeks">
+    <span class="lab">Week</span>
+  </div>
+
+  <p class="lede" id="lede"></p>
+
+  <div class="warm" id="warm"></div>
+
+  <div class="days" id="grid"></div>
+
+  <p class="tip">Tap any exercise to tick it off — progress saves on this device · Rest 45–60s between every set · Sessions run 40–50 min.</p>
+
+  <div class="grad">
+    <span class="tl-title">Joint traffic lights</span>
+    <b style="color:#1a7d3f">Green</b> — ache ≤3/10, gone by morning — keep going. <b style="color:#b0670a">Amber</b> — sharp or worse next day — ease range or load. <b style="color:#c0271a">Red</b> — changes how you move — swap the exercise, keep training the rest.
+  </div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+/* load arrays are indexed by week within the block (index 0..5) */
+const CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="#f4f4f0" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6"/></svg>';
+
+const BLOCKS = {
+  1:{
+  weeks:[1,2,3,4,5,6], type:'Foundation',
+  lede:'Everything deliberately light — these weeks build tendons, grooves and stabilisers.',
+  warm:'2 min easy marching → ankle circles + leg swings + arm swings → <b>10 × BW</b> squats → <b>6 × 4kg</b> halos.',
+  days:[
+  {
+    label:'Day A', name:'Legs & Core',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'alternate a ↔ b, rest 45–60s',
+        ex:[
+          {code:'1a', nm:'Goblet box squat', note:'3s lowering, to box/chair',
+           load:['BW · 3×8','BW · 3×10','8kg · 3×8','8kg · 3×10','12kg · 3×8','12kg · 3×10']},
+          {code:'1b', nm:'Dead bug', note:'lower back pressed flat, weight over chest',
+           load:['BW · 3×6/side','BW · 3×8/side','BW · 3×8/side','BW · 3×10/side','2×3kg DB · 3×8/side','2×3kg DB · 3×10/side']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 45–60s',
+        ex:[
+          {code:'2a', nm:'Glute bridge', note:'bell on hips',
+           load:['BW · 3×12','12kg · 3×10','12kg · 3×12','16kg · 3×10','16kg · 3×12','16kg · 3×12 · 2s hold']},
+          {code:'2b', nm:'Slow calf raise', note:'3s lowering, full range',
+           load:['BW · 3×12','BW · 3×15','+12kg · 3×10','+12kg · 3×12','+16kg · 3×10','+16kg · 3×12']},
+        ]},
+      {kind:'pair', tag:'Superset 3', info:'alternate a ↔ b, rest 45–60s',
+        ex:[
+          {code:'3a', nm:'Wall sit', note:'thighs parallel, mild ache OK not sharp',
+           load:['2×30s','3×30s','3×40s','3×45s','3×45s +8kg','3×50–60s +8kg']},
+          {code:'3b', nm:'Tibialis raise', note:'heels off wall, toes up',
+           load:['2×12','2×15','2×15','2×18','2×20','2×20']},
+        ]},
+      {kind:'solo', tag:'Finish', ex:
+        {code:'4', nm:'Wrist + reverse wrist curls', note:'light & slow, full range',
+         load:['4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea']}},
+    ]
+  },
+  {
+    label:'Day B', name:'Upper & Carries',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'push / pull — alternate, rest 45–60s',
+        ex:[
+          {code:'1a', nm:'One-arm KB floor press', note:'neutral grip, per side',
+           load:['12kg · 3×8','12kg · 3×10','12kg · 3×12','16kg · 3×8','16kg · 3×10','16kg · 3×12']},
+          {code:'1b', nm:'One-arm row', note:'strict, no torso twist, per side',
+           load:['16kg · 3×8','16kg · 3×10','16kg · 3×12','16kg · 4×10','16kg · 4×12','16kg · 4×12 · 2s hold']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 45–60s',
+        ex:[
+          {code:'2a', nm:'KB halo', note:'slow circles round head, per direction',
+           load:['8kg · 2×6','8kg · 2×8','8kg · 2×8','8kg · 2×10','8kg · 2×10','12kg · 2×6']},
+          {code:'2b', nm:'Band pull-apart', note:'slow, squeeze shoulder blades',
+           load:['3×15','3×15','3×15','3×20','3×20','3×20']},
+        ]},
+      {kind:'pair', tag:'Superset 3', info:'grip work last — alternate, rest 60s',
+        ex:[
+          {code:'3a', nm:'Offset farmer carry', note:'swap hands each set, stay tall',
+           load:['16+12kg · 3×30s','16+12kg · 3×40s','16+12kg · 4×40s','16+12kg · 4×45s tall','16+12kg · 5×45s','16+12kg · 4×60s']},
+          {code:'3b', nm:'Plank', note:'squeeze glutes, no sag',
+           load:['3×30s','3×35s','3×40s','3×45s','3×50s','3×60s']},
+        ]},
+    ]
+  },
+  {
+    label:'Day C', name:'Hinge & Full Body',
+    items:[
+      {kind:'pair', tag:'Superset 1',
+        info:['alternate a ↔ b, rest 45–60s','alternate a ↔ b, rest 45–60s','alternate a ↔ b, rest 45–60s','cycle a → b → c, rest 45–60s','cycle a → b → c, rest 45–60s','cycle a → b → c, rest 45–60s'],
+        ex:[
+          {code:'1a', nm:'Double-KB RDL', note:'matched bells, 3s lower',
+           load:['2×16kg · 3×8','2×16kg · 3×10','2×16kg · 3×12','2×16kg · 3×12','2×16kg · 2×10','2×16kg · 2×10']},
+          {code:'1b', nm:'Single-leg RDL', from:4, note:'hold doorframe lightly, per side',
+           load:['—','—','—','BW · 2×6','8kg · 3×6','12kg · 3×6']},
+          {code:'1c', nm:'Bird dog', note:'per side',
+           load:['3×8','3×8','3×8 · 3s hold','3×8 · 3s hold','3×8 · 3s hold','3×8 · 3s hold']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'lower / upper — alternate, rest 45–60s',
+        ex:[
+          {code:'2a', nm:'Split squat', note:'goblet hold, per side',
+           load:['BW · 3×6','BW · 3×8','8kg · 3×6','8kg · 3×8','12kg · 3×6','12kg · 3×8']},
+          {code:'2b', nm:'Half-kneeling one-arm press', note:'per side, ribs down',
+           load:['8kg · 3×8','8kg · 3×10','12kg · 3×6','12kg · 3×8','12kg · 3×10','16kg · 3×5']},
+        ]},
+      {kind:'solo', tag:'Carry', ex:
+        {code:'3', nm:'Suitcase carry', note:'per side — stay dead level',
+         load:['16kg · 3×30s','16kg · 3×35s','16kg · 3×40s','16kg · 3×45s','16kg · 3×50s','16kg · 3×60s']}},
+      {kind:'solo', tag:'Finish', ex:
+        {code:'4', nm:'Wrist + reverse wrist curls', note:'light & slow, full range',
+         load:['4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea','4kg · 2×15 ea']}},
+    ]
+  }
+  ]},
+
+  2:{
+  weeks:[7,8,9,10,11,12], type:'Adaptation',
+  lede:'Load goes on; squats reach depth; the swing arrives; now driving strength.',
+  warm:'2 min easy marching → ankle circles + leg swings + arm swings → <b>10 × BW</b> squats → <b>6 × 8kg</b> halos → <b>10 × 12kg</b> swings.',
+  days:[
+  {
+    label:'Day A', name:'Legs & Power',
+    items:[
+      {kind:'solo', tag:'Impact', ex:
+        {code:'1', nm:'Pogo hops', note:'low, springy, quiet landings',
+         load:['2×15','2×15','2×20','3×15','3×20','3×20']},
+      },
+      {kind:'pair', tag:'Superset 1', info:'alternate a ↔ b, rest 60–75s',
+        ex:[
+          {code:'2a', nm:'Goblet squat', note:'full depth, chest tall',
+           load:['16kg · 3×8','16kg · 3×10','20kg · 3×8','20kg · 3×10','24kg · 3×6','24kg · 3×8']},
+          {code:'2b', nm:'Dead bug', note:'weight over chest, slow & controlled',
+           load:['2×3kg DB · 3×10/side','2×6kg DB · 3×8/side','2×6kg DB · 3×10/side','2×6kg DB · 3×12/side','2×6kg DB · 3×10/side · 2s pause','2×6kg DB · 3×12/side · 2s pause']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 60s',
+        ex:[
+          {code:'3a', nm:'Step-up', note:'20cm box/stair, drive through heel, per side',
+           load:['BW · 3×8','8kg · 3×8','12kg · 3×8','16kg · 3×8','20kg · 3×6','20kg · 3×8']},
+          {code:'3b', nm:'Slow calf raise', note:'3s lowering, one leg from Wk 10',
+           load:['+16kg · 3×12','+20kg · 3×10','+20kg · 3×12','1-leg · 3×10','1-leg · 3×12','1-leg +8kg · 3×10']},
+        ]},
+      {kind:'solo', tag:'Power', ex:
+        {code:'4', nm:'KB swing', note:'two-hand, snap the hips, float the bell',
+         load:['16kg · 5×10','20kg · 5×10','20kg · 6×10','24kg · 5×10','24kg · 6×10','24kg · 8×10']},
+      },
+    ]
+  },
+  {
+    label:'Day B', name:'Upper & Carries',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'push / pull — alternate, rest 60–75s',
+        ex:[
+          {code:'1a', nm:'One-arm floor press', note:'neutral grip, per side',
+           load:['16kg · 3×10','20kg · 3×8','20kg · 3×10','24kg · 3×6','24kg · 3×8','24kg · 3×10']},
+          {code:'1b', nm:'One-arm row', note:'strict, elbow to hip, per side',
+           load:['20kg · 3×10','20kg · 3×12','24kg · 3×8','24kg · 3×10','24kg · 4×10','24kg · 4×12']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 60s',
+        ex:[
+          {code:'2a', nm:'Half-kneeling press', note:'per side, ribs down',
+           load:['16kg · 3×6','16kg · 3×8','20kg · 3×5','20kg · 3×6','20kg · 3×8','24kg · 3×5']},
+          {code:'2b', nm:'Band pull-apart', note:'2s hold at end range',
+           load:['3×20','3×20','3×20','3×25','3×25','3×25']},
+        ]},
+      {kind:'solo', tag:'Carry', ex:
+        {code:'3', nm:'Farmer carry', note:'matched bells, tall & braced',
+         load:['2×20kg · 4×40s','2×20kg · 4×50s','2×24kg · 4×40s','2×24kg · 4×50s','2×24kg · 5×50s','2×24kg · 4×60s']},
+      },
+      {kind:'solo', tag:'Finish', ex:
+        {code:'4', nm:'Wrist + reverse wrist curls', note:'light & slow, full range',
+         load:['8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea']},
+      },
+    ]
+  },
+  {
+    label:'Day C', name:'Hinge & Full Body',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'cycle a → b → c, rest 60–75s',
+        ex:[
+          {code:'1a', nm:'Double-KB RDL', note:'matched, 3s lower',
+           load:['2×20kg · 3×8','2×20kg · 3×10','2×24kg · 3×8','2×24kg · 3×10','2×24kg · 4×8','2×24kg · 4×10']},
+          {code:'1b', nm:'Single-leg RDL', note:'per side, add load when steady',
+           load:['12kg · 3×6','12kg · 3×8','16kg · 3×6','16kg · 3×8','20kg · 3×6','20kg · 3×8']},
+          {code:'1c', nm:'Bird dog', note:'per side, 3s hold',
+           load:['3×10','3×10','3×10','3×12','3×12','3×12']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'lower / upper — alternate, rest 60s',
+        ex:[
+          {code:'2a', nm:'Rear-foot elevated split squat', note:'knees-permitting, per side',
+           load:['BW · 3×8','8kg · 3×8','12kg · 3×8','16kg · 3×6','16kg · 3×8','20kg · 3×6']},
+          {code:'2b', nm:'Tall-kneeling press', note:'both arms, brace hard',
+           load:['16kg · 3×6','16kg · 3×8','20kg · 3×5','20kg · 3×6','20kg · 3×8','24kg · 3×5']},
+        ]},
+      {kind:'solo', tag:'Power', ex:
+        {code:'3', nm:'KB swing', note:'crisp, snap the hips',
+         load:['20kg · 6×10','24kg · 5×10','24kg · 6×10','24kg · 8×10','24kg · 8×12','24kg · 10×10']},
+      },
+      {kind:'solo', tag:'Carry', ex:
+        {code:'4', nm:'Suitcase carry', note:'per side — stay dead level',
+         load:['20kg · 3×40s','20kg · 3×50s','24kg · 3×40s','24kg · 3×50s','24kg · 3×60s','24kg · 4×50s']},
+      },
+    ]
+  }
+  ]},
+
+  3:{
+  weeks:[13,14,15,16,17,18], type:'Integration',
+  lede:'The build. Heavier bells and denser work. This is where the patience pays off.',
+  warm:'2 min easy marching → ankle circles + leg swings + arm swings → <b>10 × BW</b> squats → <b>6 × 12kg</b> halos → <b>10 × 16kg</b> swings.',
+  days:[
+  {
+    label:'Day A', name:'Legs & Power',
+    items:[
+      {kind:'solo', tag:'Impact', ex:
+        {code:'1', nm:'Skipping rope', note:'both feet, no tricks',
+         load:['4×30s','5×30s','5×40s','6×40s','6×45s','6×60s']},
+      },
+      {kind:'pair', tag:'Superset 1', info:'alternate a ↔ b, rest 75–90s',
+        ex:[
+          {code:'2a', nm:'Double-KB front squat', note:'matched, full depth, elbows high',
+           load:['2×20kg · 3×6','2×20kg · 3×8','2×24kg · 3×6','2×24kg · 3×8','2×24kg · 4×6','2×24kg · 4×8']},
+          {code:'2b', nm:'Dead-bug hold', note:'hold braced at extension, breathe slow, per side',
+           load:['2×6kg DB · 3×20s/side','2×6kg DB · 3×22s/side','2×6kg DB · 3×25s/side','2×6kg DB · 3×25s/side','2×6kg DB · 3×30s/side','2×6kg DB · 3×30s/side']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 60–75s',
+        ex:[
+          {code:'3a', nm:'Weighted step-up', note:'higher box, per side',
+           load:['20kg · 3×8','24kg · 3×6','24kg · 3×8','2×20kg · 3×6','2×20kg · 3×8','2×24kg · 3×6']},
+          {code:'3b', nm:'Single-leg calf raise', note:'+load, full range, per side',
+           load:['+12kg · 3×10','+16kg · 3×10','+16kg · 3×12','+20kg · 3×10','+20kg · 3×12','+24kg · 3×10']},
+        ]},
+      {kind:'solo', tag:'Power', ex:
+        {code:'4', nm:'KB swing', note:'heavy, explosive, full hip snap',
+         load:['24kg · 8×10','24kg · 10×10','24kg · 10×12','24kg · 12×10','24kg · 10×15','24kg · 12×12']},
+      },
+    ]
+  },
+  {
+    label:'Day B', name:'Upper, Neck & Carries',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'push / pull — alternate, rest 75–90s',
+        ex:[
+          {code:'1a', nm:'Double-KB floor press', note:'matched bells, pressed together',
+           load:['2×20kg · 3×8','2×20kg · 3×10','2×24kg · 3×6','2×24kg · 3×8','2×24kg · 3×8 · 3s lower','2×24kg · 3×8 · pause']},
+          {code:'1b', nm:'One-arm row', note:'strict, heavy, elbow to hip, per side',
+           load:['24kg · 3×10','24kg · 4×8','24kg · 4×10','24kg · 4×12','24kg · 5×10','24kg · 5×12']},
+        ]},
+      {kind:'pair', tag:'Superset 2', info:'alternate a ↔ b, rest 60–75s',
+        ex:[
+          {code:'2a', nm:'Standing one-arm press', note:'strict, no leg drive, per side',
+           load:['20kg · 3×6','20kg · 3×8','24kg · 3×5','24kg · 3×6','24kg · 3×8','24kg · 4×6']},
+          {code:'2b', nm:'Neck isometrics', note:'hand resistance, 4 directions — light',
+           load:['3×15s ea','3×15s ea','3×20s ea','3×20s ea','3×25s ea','3×25s ea']},
+        ]},
+      {kind:'solo', tag:'Carry', ex:
+        {code:'3', nm:'Farmer carry', note:'matched bells, tall & braced',
+         load:['2×24kg · 4×60s','2×24kg · 5×60s','2×24kg · 4×70s','2×24kg · 4×80s','2×24kg · 4×90s','2×24kg · 5×90s']},
+      },
+      {kind:'solo', tag:'Finish', ex:
+        {code:'4', nm:'Wrist + reverse wrist curls', note:'light & slow, full range',
+         load:['8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea','8kg · 2×15 ea']},
+      },
+    ]
+  },
+  {
+    label:'Day C', name:'Hinge & Ground',
+    items:[
+      {kind:'pair', tag:'Superset 1', info:'alternate a ↔ b, rest 75–90s',
+        ex:[
+          {code:'1a', nm:'Double-KB RDL', note:'matched, heavy, 3s lower',
+           load:['2×24kg · 3×8','2×24kg · 3×10','2×24kg · 4×8','2×24kg · 4×10','2×24kg · 5×8','2×24kg · 5×10']},
+          {code:'1b', nm:'Single-leg RDL', note:'per side, loaded',
+           load:['20kg · 3×6','20kg · 3×8','24kg · 3×6','24kg · 3×8','24kg · 3×10','2×20kg · 3×6']},
+        ]},
+      {kind:'solo', tag:'Ground', ex:
+        {code:'2', nm:'Turkish get-up', note:'slow & controlled, per side',
+         load:['16kg · 3 ea','16kg · 4 ea','20kg · 3 ea','20kg · 4 ea','24kg · 3 ea','24kg · 4 ea']},
+      },
+      {kind:'pair', tag:'Superset 2', info:'lower / core — alternate, rest 60s',
+        ex:[
+          {code:'3a', nm:'Rear-foot elevated split squat', note:'per side',
+           load:['16kg · 3×8','20kg · 3×6','20kg · 3×8','24kg · 3×6','24kg · 3×8','2×20kg · 3×6']},
+          {code:'3b', nm:'Pallof press', note:'band anti-rotation, per side',
+           load:['3×10','3×10','3×12','3×12','3×12 · 2s','3×12 · 2s']},
+        ]},
+    ]
+  }
+  ]}
+};
+
+/* ---------- render ---------- */
+let block = 1;          // current block key
+let wi = 0;             // week index within block (0..5)
+const grid = document.getElementById('grid');
+const weeksEl = document.getElementById('weeks');
+const ledeEl = document.getElementById('lede');
+const warmEl = document.getElementById('warm');
+
+/* ---------- persistent storage ----------
+   Ticks keyed by block|week|day|slot (position, NOT name) so renaming an
+   exercise never orphans its tick. Collapse state keyed per block|week|day.
+   Silently no-ops where browser storage is unavailable (e.g. chat preview). */
+const STORE = 'sfp-ticks-v2';
+const CSTORE = 'sfp-collapse-v1';
+let TICKS = {};
+let COLLAPSE = {};
+try { TICKS = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch(e){ TICKS = {}; }
+try { COLLAPSE = JSON.parse(localStorage.getItem(CSTORE) || '{}') || {}; } catch(e){ COLLAPSE = {}; }
+function persistTicks(){ try { localStorage.setItem(STORE, JSON.stringify(TICKS)); } catch(e){} }
+function persistCollapse(){ try { localStorage.setItem(CSTORE, JSON.stringify(COLLAPSE)); } catch(e){} }
+function setTick(k, done){ if(done){ TICKS[k]=1; } else { delete TICKS[k]; } persistTicks(); }
+
+/* A slot id is the exercise's fixed position in the data: item index + sub index.
+   This is stable even when display codes shift (e.g. single-leg RDL appearing). */
+function exKey(bk, w, dayLabel, slot){ return bk+'|'+w+'|'+dayLabel+'|'+slot; }
+function dayCollapseKey(bk, w, dayLabel){ return bk+'|'+w+'|'+dayLabel; }
+
+/* Count every exercise scheduled across all 6 weeks of a block, and how many
+   are ticked — used for the per-block completion %. Counts only exercises that
+   actually appear that week (skips single-leg RDL in weeks it's absent). */
+function blockTotals(bk){
+  const B = BLOCKS[bk];
+  let total = 0, done = 0;
+  B.days.forEach(day=>{
+    B.weeks.forEach((wn, w)=>{
+      day.items.forEach((it, ii)=>{
+        const list = it.kind==='pair' ? it.ex : [it.ex];
+        list.forEach((e, si)=>{
+          if(e.from && (w+1) < e.from) return;      // not scheduled this week
+          if(e.load[w] === '—') return;              // explicit skip
+          total++;
+          if(TICKS[exKey(bk, w, day.label, ii+'.'+si)]) done++;
+        });
+      });
+    });
+  });
+  return {total, done, pct: total ? Math.round(done/total*100) : 0};
+}
+
+function exRow(e, w, kprefix, slot){
+  const val = e.load[w];
+  const na = (val === '—');
+  const key = kprefix + '|' + slot;
+  const done = TICKS[key] ? ' done' : '';
+  return `<div class="ex${done}" role="button" tabindex="0" data-k="${key}">
+    <div class="tick"><span class="code">${e.code}</span>${CHK}</div>
+    <div class="txt">
+      <div class="nm">${e.nm}</div>
+      <div class="note">${e.note}</div>
+      <span class="load${na?' na':''}">${na?'skip this week':val}</span>
+    </div>
+  </div>`;
+}
+
+function dayMarkup(day, w, bk){
+  const kprefix = bk+'|'+w+'|'+day.label;
+  const collapsed = COLLAPSE[dayCollapseKey(bk, w, day.label)] ? ' closed' : '';
+  const body = day.items.map((it, ii)=>{
+    if(it.kind==='pair'){
+      const grp = (it.ex[0].code.match(/^\d+/)||['1'])[0];
+      const letters='abcdefgh';
+      const vis = it.ex.map((e,si)=>({e,si})).filter(o=> !o.e.from || (w+1) >= o.e.from);
+      const rows = vis.map((o,vi)=> exRow({...o.e, code:grp+letters[vi]}, w, kprefix, ii+'.'+o.si)).join('');
+      const info = Array.isArray(it.info) ? it.info[w] : it.info;
+      return `<div class="pair">
+        <div class="ph"><span class="pt">${it.tag}</span><span class="pi">${info}</span></div>
+        ${rows}
+      </div>`;
+    } else {
+      const finMod = it.tag==='Finish' ? ' fin' : '';
+      return `<div class="pair solo">
+        <div class="ph"><span class="pt${finMod}">${it.tag}</span></div>
+        ${exRow(it.ex, w, kprefix, ii+'.0')}
+      </div>`;
+    }
+  }).join('');
+  return `<div class="day${collapsed}" data-ck="${dayCollapseKey(bk, w, day.label)}">
+    <div class="hd">
+      <span class="dl">${day.label}</span>
+      <span class="dn">${day.name}</span>
+      <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+    </div>
+    <div class="body">${body}</div>
+  </div>`;
+}
+
+function renderWeeks(){
+  const wks = BLOCKS[block].weeks;
+  weeksEl.innerHTML = '<span class="lab">Week</span>' +
+    wks.map((n,i)=>`<button class="wk${i===wi?' on':''}" data-i="${i}"><span class="n">${n}</span></button>`).join('');
+  weeksEl.querySelectorAll('.wk').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      wi = +b.dataset.i;
+      weeksEl.querySelectorAll('.wk').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      renderDays();
+    });
+  });
+}
+
+function renderDays(){
+  grid.innerHTML = BLOCKS[block].days.map(day=>dayMarkup(day, wi, block)).join('')
+    + '<button class="reset-week" id="resetWeek">Reset week ' + BLOCKS[block].weeks[wi] + '</button>';
+  bindTicks();
+}
+
+/* update the completion subtitle on all three block buttons */
+function updateSubtitles(){
+  [1,2,3].forEach(bk=>{
+    const t = blockTotals(bk);
+    const el = document.getElementById('bsub'+bk);
+    if(el) el.textContent = BLOCKS[bk].type + ' – ' + t.pct + '% completed';
+  });
+}
+
+function renderBlock(){
+  ledeEl.innerHTML = BLOCKS[block].lede;
+  warmEl.innerHTML = '<span class="t">Warm-up · 5 min</span><span class="s">'+BLOCKS[block].warm+'</span>';
+  renderWeeks();
+  renderDays();
+  updateSubtitles();
+}
+
+function bindTicks(){
+  grid.querySelectorAll('.day .hd').forEach(h=>{
+    h.addEventListener('click', ()=>{
+      const day = h.closest('.day');
+      day.classList.toggle('closed');
+      const ck = day.dataset.ck;
+      if(day.classList.contains('closed')){ COLLAPSE[ck]=1; } else { delete COLLAPSE[ck]; }
+      persistCollapse();
+    });
+  });
+  grid.querySelectorAll('.ex').forEach(r=>{
+    const toggle=()=>{
+      r.classList.toggle('done');
+      setTick(r.dataset.k, r.classList.contains('done'));
+      updateSubtitles();
+    };
+    r.addEventListener('click', ev=>{ ev.stopPropagation(); toggle(); });
+    r.addEventListener('keydown', ev=>{
+      if(ev.key===' '||ev.key==='Enter'){ ev.preventDefault(); toggle(); }
+    });
+  });
+  const rw = document.getElementById('resetWeek');
+  if(rw) rw.addEventListener('click', ()=>{
+    // clear every tick for the current block+week across all days
+    const prefix = block+'|'+wi+'|';
+    Object.keys(TICKS).forEach(k=>{ if(k.indexOf(prefix)===0) delete TICKS[k]; });
+    persistTicks();
+    renderDays();
+    updateSubtitles();
+  });
+}
+
+document.querySelectorAll('.blk').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.blk').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    block = +b.dataset.b;
+    wi = 0;
+    renderBlock();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* print: expand every block, all six weeks stacked */
+window.addEventListener('beforeprint', ()=>{
+  grid.innerHTML='';
+  Object.keys(BLOCKS).forEach(bk=>{
+    const b=BLOCKS[bk];
+    const btitle=document.createElement('div');
+    btitle.className='wk-print-label';
+    btitle.style.fontSize='19px';
+    btitle.textContent='Block '+bk+' · Weeks '+b.weeks[0]+'–'+b.weeks[b.weeks.length-1];
+    grid.appendChild(btitle);
+    b.weeks.forEach((wn,wIdx)=>{
+      const lbl=document.createElement('div');
+      lbl.className='wk-print-label'; lbl.textContent='Week '+wn;
+      grid.appendChild(lbl);
+      const dd=document.createElement('div'); dd.className='days';
+      const tmp=document.createElement('div');
+      tmp.innerHTML=b.days.map(day=>dayMarkup(day, wIdx, bk)).join('');
+      while(tmp.firstChild) dd.appendChild(tmp.firstChild);
+      grid.appendChild(dd);
+    });
+  });
+});
+window.addEventListener('afterprint', renderBlock);
+
+renderBlock();
+</script>
+</body>
+</html>
