@@ -10,10 +10,10 @@
 <style>
   :root{
     --ink:#16201c;
-    --paper:#0b4008;        /* deep field green background */
+    --paper:#0B2B07;        /* deep field green background */
     --on-paper:#f4f4f0;     /* light text on the green */
     --on-paper-dim:#a9c3a6; /* dimmed light text on the green */
-    --hdr:#d2e3d4;          /* day-card header colour */
+    --hdr:#a8c3a0;          /* day-card header / selected colour */
     --card:#f4f4f0;
     --line:#d5cfc2;
     --muted:#6d7671;
@@ -66,9 +66,22 @@
     line-height:1.25; white-space:normal; overflow-wrap:break-word;
     max-width:100%;
   }
-  .blk.on{background:#d2e3d4; border-color:#d2e3d4;}
+  .blk.on{background:var(--hdr); border-color:var(--hdr);}
   .blk.on .bn{color:#0b2b07;}
   .blk.on .bsub{color:#2f4a35;}
+
+  /* completed block — grey, wins over the selected mint */
+  .blk.done{
+    background:#8E9192;
+    border-color:#6f7273; border-width:1px;
+  }
+  .blk.done .bn{color:#16201c;}
+  .blk.done .bsub{color:#2b2f30;}
+  /* completed AND selected — keep grey, lift the border for emphasis */
+  .blk.done.on{
+    border-color:#565859;
+    border-width:2px;
+  }
 
   /* ---- week selector ---- */
   .weeks{
@@ -185,7 +198,7 @@
     flex:0 0 auto; white-space:nowrap;
     font-family:'Barlow Condensed',sans-serif; font-weight:700;
     font-size:11px; letter-spacing:.11em; text-transform:uppercase;
-    color:#f4f4f0; background:#1f3823; border-radius:5px; padding:2px 8px;
+    color:#f4f4f0; background:#3b5538; border-radius:5px; padding:2px 8px;
   }
   .pair .ph .pt.fin{background:var(--amber);}
   .pair .ph .pi{font-size:11px; color:var(--muted); min-width:0;}
@@ -293,7 +306,7 @@ const BLOCKS = {
   1:{
   weeks:[1,2,3,4,5,6], type:'Foundation',
   lede:'Everything deliberately light — these weeks build tendons, grooves and stabilisers.',
-  warm:'2 min easy marching → ankle circles + leg swings + arm swings → <b>10 × BW</b> squats → <b>6 × 4kg</b> halos.',
+  warm:'2 min easy marching → ankle circles + leg swings + arm swings → <b>10 × BW</b> squats → <b>6 × 8kg</b> halos.',
   days:[
   {
     label:'Day A', name:'Legs & Core',
@@ -671,12 +684,14 @@ function renderDays(){
   bindTicks();
 }
 
-/* update the completion subtitle on all three block buttons */
+/* update the completion subtitle + gold 'done' state on all three block buttons */
 function updateSubtitles(){
   [1,2,3].forEach(bk=>{
     const t = blockTotals(bk);
     const el = document.getElementById('bsub'+bk);
     if(el) el.textContent = BLOCKS[bk].type + ' – ' + t.pct + '% completed';
+    const btn = document.querySelector('.blk[data-b="'+bk+'"]');
+    if(btn) btn.classList.toggle('done', t.pct === 100);
   });
 }
 
